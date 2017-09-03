@@ -9,6 +9,9 @@
     "eslint-config-xo": "^0.18.2",
     "eslint-plugin-html": "^3.2.1"
   },
+  "optionalDependencies": {
+    "7zip-bin-mac": "^1.0.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/lange/x32-mute-matrix.git"
