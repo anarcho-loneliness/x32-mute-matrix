@@ -72,7 +72,7 @@ function regenerateMenu() {
 					minimizable: false,
 					maximizable: false,
 					autoHideMenuBar: true,
-					title: 'New Dashboard'
+					title: 'Connect'
 				});
 
 				urlPromptWindow.on('closed', () => {

@@ -9,10 +9,7 @@ class X32ChannelLabel extends Polymer.Element {
 
 	static get properties() {
 		return {
-			channel: {
-				type: Object,
-				observer: '_channelChanged'
-			},
+			channel: Object,
 			index: Number,
 			highlightColumn: {
 				type: Number,
@@ -21,9 +18,53 @@ class X32ChannelLabel extends Polymer.Element {
 		};
 	}
 
-	_channelChanged(newVal) {
+	static get observers() {
+		return [
+			'updateColor(channel.color)'
+		];
+	}
+
+	updateColor(newColorCode) {
+		let hexColor;
+		switch (newColorCode) {
+			case 'BL':
+			case 'BLi':
+				hexColor = '#0000FF';
+				break;
+			case 'CY':
+			case 'CYi':
+				hexColor = '#00FFFF';
+				break;
+			case 'GN':
+			case 'GNi':
+				hexColor = '#00FF00';
+				break;
+			case 'MG':
+			case 'MGi':
+				hexColor = '#FF00FF';
+				break;
+			case 'OFF':
+			case 'OFFi':
+				hexColor = '#808080';
+				break;
+			case 'RD':
+			case 'RDi':
+				hexColor = '#FF0000';
+				break;
+			case 'WH':
+			case 'WHi':
+				hexColor = '#FFFFFF';
+				break;
+			case 'YE':
+			case 'YEi':
+				hexColor = '#FFFF00';
+				break;
+			default:
+				// Do nothing.
+		}
+
 		this.updateStyles({
-			'--x32-channel-label-color': newVal.color
+			'--x32-channel-label-color': hexColor
 		});
 	}
 

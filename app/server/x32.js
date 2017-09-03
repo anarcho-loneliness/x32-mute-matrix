@@ -1,6 +1,28 @@
 'use strict';
 
+const BLOB_START_OFFSET = 4;
+const NAME_LEN_BYTES = 32;
+const NUM_CHANNELS = 32;
+const NUM_MIXBUSES = 16;
 const X32_UDP_PORT = 10023;
+const COLOR_MAP = [
+	'OFF',
+	'RD',
+	'GN',
+	'YE',
+	'BL',
+	'MG',
+	'CY',
+	'WH',
+	'OFFi',
+	'RDi',
+	'GNi',
+	'YEi',
+	'BLi',
+	'MGi',
+	'CYi',
+	'WHi'
+];
 
 // Packages
 const getPort = require('get-port');
@@ -11,11 +33,14 @@ const log = require('electron-log');
 const mixbusMutes = [];
 let udpPort;
 let broadcastPort;
+let mainWindow;
 
 module.exports = {
-	async init(mainWindow) {
-		for (let i = 0; i < 16; i++) {
-			mixbusMutes[i] = new Array(32).fill(false);
+	async init(mw) {
+		mainWindow = mw;
+
+		for (let i = 0; i < NUM_MIXBUSES; i++) {
+			mixbusMutes[i] = new Array(NUM_CHANNELS).fill(false);
 		}
 
 		udpPort = new osc.UDPPort({
@@ -56,7 +81,7 @@ module.exports = {
 			const str = buf.toString('ascii');
 			let valueBytes;
 
-			if (str.indexOf(`/mixMutes/`) === 0) {
+			if (str.startsWith(`/mixMutes/`)) {
 				const mixbusNumber = parseInt(str.match(/\d+/)[0], 10);
 				if (typeof mixbusNumber !== 'number') {
 					return;
@@ -64,24 +89,35 @@ module.exports = {
 
 				// Start reading values from after the header
 				valueBytes = buf.slice(buf.lastIndexOf(0x62) + 8);
-				for (let c = 0; c < 32; c++) {
+				for (let c = 0; c < NUM_CHANNELS; c++) {
 					mixbusMutes[mixbusNumber - 1][c] = Boolean(valueBytes.readFloatBE(c * 4));
 				}
+
+				sendToMainWindow('x32-mutes', mixbusMutes);
 			}
 		});
 
-		setInterval(() => {
-			try {
-				mainWindow.webContents.send('x32-data', mixbusMutes);
-			} catch (e) {
-				if (e.message.startsWith('Object has been destroyed')) {
-					// This happens when closing the program sometimes.
-					return;
-				}
-
-				throw e;
+		udpPort.on('message', oscBundle => {
+			if (oscBundle.address === '/channelConfigs') {
+				foo(new Buffer(oscBundle.args[0].value), 'channel');
+			} else if (oscBundle.address === '/busConfigs') {
+				foo(new Buffer(oscBundle.args[0].value), 'bus');
 			}
-		}, 100);
+		});
+
+		function foo(blob, type) {
+			const num = type === 'channel' ? NUM_CHANNELS : NUM_MIXBUSES;
+			const configs = new Array(num);
+			for (let c = 0; c < num; c++) {
+				const start = BLOB_START_OFFSET + (c * NAME_LEN_BYTES);
+				const end = blob.indexOf(0x00, start);
+				const name = blob.toString('ascii', start, end);
+				const color = blob.readInt32LE(BLOB_START_OFFSET + (num * NAME_LEN_BYTES) + (c * 4));
+				configs[c] = {name, color: COLOR_MAP[color]};
+			}
+
+			sendToMainWindow(`x32-${type}-configs`, configs);
+		}
 
 		udpPort.on('error', error => {
 			log.error('[osc] Error:', error.stack);
@@ -131,7 +167,7 @@ function renewSubscriptions() {
 		return;
 	}
 
-	for (let m = 0; m < 16; m++) {
+	for (let m = 0; m < NUM_MIXBUSES; m++) {
 		const formattedM = toFixed2(m);
 		udpPort.send({
 			address: '/batchsubscribe',
@@ -139,11 +175,37 @@ function renewSubscriptions() {
 				{type: 's', value: `/mixMutes/${formattedM}`},
 				{type: 's', value: `/mix/${formattedM}/on`},
 				{type: 'i', value: 0},
-				{type: 'i', value: 31},
-				{type: 'i', value: 1}
+				{type: 'i', value: NUM_CHANNELS - 1},
+				{type: 'i', value: 4}
 			]
 		});
+
+		// TODO: /config/buslink/1‐2
 	}
+
+	udpPort.send({
+		address: '/formatsubscribe',
+		args: [
+			{type: 's', value: '/channelConfigs'},
+			{type: 's', value: '/ch/**/config/name'},
+			{type: 's', value: '/ch/**/config/color'},
+			{type: 'i', value: 1},
+			{type: 'i', value: NUM_CHANNELS},
+			{type: 'i', value: 80}
+		]
+	});
+
+	udpPort.send({
+		address: '/formatsubscribe',
+		args: [
+			{type: 's', value: '/busConfigs'},
+			{type: 's', value: '/bus/**/config/name'},
+			{type: 's', value: '/bus/**/config/color'},
+			{type: 'i', value: 1},
+			{type: 'i', value: NUM_MIXBUSES},
+			{type: 'i', value: 80}
+		]
+	});
 }
 
 function toFixed2(num) {
@@ -153,4 +215,12 @@ function toFixed2(num) {
 
 function udpPortIsConfigured() {
 	return udpPort && udpPort.options.remoteAddress && udpPort.options.remotePort;
+}
+
+function sendToMainWindow(...args) {
+	if (mainWindow.isDestroyed()) {
+		return;
+	}
+
+	mainWindow.webContents.send(...args);
 }

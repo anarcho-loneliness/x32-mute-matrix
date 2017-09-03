@@ -15,10 +15,7 @@
 
 		static get properties() {
 			return {
-				bus: {
-					type: Object,
-					observer: '_busChanged'
-				},
+				bus: Object,
 				index: Number,
 				highlightRow: Number,
 				highlightColumn: Number
@@ -27,13 +24,52 @@
 
 		static get observers() {
 			return [
+				'updateColor(bus.color)',
 				'_highlightsChanged(highlightRow)'
 			];
 		}
 
-		_busChanged(newVal) {
+		updateColor(newColorCode) {
+			let hexColor;
+			switch (newColorCode) {
+				case 'BL':
+				case 'BLi':
+					hexColor = '#0000FF';
+					break;
+				case 'CY':
+				case 'CYi':
+					hexColor = '#00FFFF';
+					break;
+				case 'GN':
+				case 'GNi':
+					hexColor = '#00FF00';
+					break;
+				case 'MG':
+				case 'MGi':
+					hexColor = '#FF00FF';
+					break;
+				case 'OFF':
+				case 'OFFi':
+					hexColor = '#808080';
+					break;
+				case 'RD':
+				case 'RDi':
+					hexColor = '#FF0000';
+					break;
+				case 'WH':
+				case 'WHi':
+					hexColor = '#FFFFFF';
+					break;
+				case 'YE':
+				case 'YEi':
+					hexColor = '#FFFF00';
+					break;
+				default:
+					// Do nothing.
+			}
+
 			this.updateStyles({
-				'--x32-row-color': newVal.color
+				'--x32-row-color': hexColor
 			});
 		}
 
