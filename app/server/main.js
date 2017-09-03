@@ -11,8 +11,8 @@ const log = require('electron-log');
 // Ours
 const {version} = require('./util');
 
-log.file.level = 'debug';
-log.console.level = 'debug';
+log.transports.file.level = 'debug';
+log.transports.console.level = 'debug';
 require('electron-debug')({showDevTools: false});
 
 // Keep a global reference of the window object, if you don't, the window will
