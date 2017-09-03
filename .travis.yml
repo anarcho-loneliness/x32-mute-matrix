@@ -1,0 +1,27 @@
+osx_image: xcode8.3
+language:
+  - ruby
+matrix:
+  include:
+    - os: linux
+    - os: osx
+env:
+  global:
+    - NODE_VERSION=8
+    # Deployment & code signing environment variables are declared in the project settings on Travis CI.
+cache:
+  directories:
+    - node_modules
+    - app/node_modules
+    - app/bower_components
+    - "$HOME/.electron"
+    - "$HOME/.npm"
+before_install:
+  - gem install --no-rdoc --no-ri fpm
+install:
+  - nvm install $NODE_VERSION
+  - npm install -g bower
+  - npm install
+script:
+  - npm test
+  - npm run dist

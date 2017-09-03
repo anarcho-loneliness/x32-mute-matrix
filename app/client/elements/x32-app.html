@@ -1,0 +1,52 @@
+<link rel="import" href="../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="x32-channel-label.html">
+<link rel="import" href="x32-row.html">
+
+<dom-module id="x32-app">
+	<template>
+		<style>
+			:host {
+				display: block;
+				font-family: Roboto, sans-serif;
+				align-items: flex-start;
+				user-select: none;
+				@apply --layout-vertical;
+			}
+
+			#channelLabels {
+				margin-left: 163px;
+				@apply --layout-horizontal;
+			}
+		</style>
+
+		<div id="channelLabels">
+			<template is="dom-repeat" items="[[channels]]" as="channel">
+				<x32-channel-label
+					channel="[[channel]]"
+					index="[[index]]"
+					highlight-column="[[highlightColumn]]"
+					on-mouseenter="_handleColumnLabelMouseEnter"
+					on-mouseleave="_handleColumnLabelMouseLeave">
+				</x32-channel-label>
+			</template>
+		</div>
+
+		<template is="dom-repeat" items="[[buses]]" as="bus">
+			<x32-row
+				bus="[[bus]]"
+				index="[[index]]"
+				highlight-row="[[highlightRow]]"
+				highlight-column="[[highlightColumn]]"
+				on-mouseenter="_handleRowMouseEnter"
+				on-mouseleave="_handleRowMouseLeave"
+				on-column-mouseenter="_handleColumnMouseEnter"
+				on-column-mouseleave="_handleColumnMouseLeave">
+			</x32-row>
+		</template>
+	</template>
+
+	<script src="x32-app.js"></script>
+</dom-module>

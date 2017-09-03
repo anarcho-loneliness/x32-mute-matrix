@@ -1,0 +1,51 @@
+{
+  "name": "x32-mute-matrix",
+  "version": "0.0.0",
+  "description": "See and configure the mute status of all your X32's channels (on every mixbus) in one place.",
+  "devDependencies": {
+    "electron": "^1.7.5",
+    "electron-builder": "^19.27.3",
+    "eslint": "^4.6.0",
+    "eslint-config-xo": "^0.18.2",
+    "eslint-plugin-html": "^3.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lange/x32-mute-matrix.git"
+  },
+  "author": "Alex Van Camp <email@alexvan.camp>",
+  "build": {
+    "appId": "org.lange.x32-mute-matrix",
+    "productName": "X32 Mute Matrix",
+    "squirrelWindows": {
+      "iconUrl": "https://raw.githubusercontent.com/lange/x32-mute-matrix/master/build/icon.ico"
+    },
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "dmg": {
+      "iconSize": 128,
+      "contents": [
+        {
+          "x": 425,
+          "y": 200,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 120,
+          "y": 200,
+          "type": "file"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "test": "npm run static",
+    "static": "eslint app/**/*.js app/**/*.html",
+    "postinstall": "electron-builder install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "start": "electron app/server/main.js --enable-logging"
+  }
+}

@@ -1,0 +1,49 @@
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="x32-channel.html">
+
+<dom-module id="x32-row">
+	<template>
+		<style>
+			:host {
+				display: block;
+				@apply --layout-horizontal;
+			}
+
+			#label {
+				width: 160px;
+				border: 2px solid var(--x32-row-color);
+				color: var(--x32-row-color);
+				background: black;
+				font-weight: 600;
+				padding: 0 8px;
+				margin: 3px;
+				margin-left: 0;
+				box-sizing: border-box;
+				@apply --layout-horizontal;
+				@apply --layout-center;
+				@apply --layout-justified;
+			}
+		</style>
+
+		<div id="label">
+			<span>[[bus.name]]</span>
+			<span>#[[_calcLabel(index)]]</span>
+		</div>
+
+		<template is="dom-repeat" items="[[bus.channels]]" as="channel" index-as="channelIndex">
+			<x32-channel
+				channel="[[channel]]"
+				index="[[channelIndex]]"
+				darken="[[_calcDarken(highlightRow, highlightColumn, index, channelIndex)]]"
+				on-tap="_handleChannelTap"
+				on-mouseenter="_handleChannelMouseEnter"
+				on-mouseleave="_handleChannelMouseLeave">
+			</x32-channel>
+		</template>
+	</template>
+
+	<script src="x32-row.js"></script>
+</dom-module>

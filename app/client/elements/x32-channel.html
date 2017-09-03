@@ -1,0 +1,27 @@
+<dom-module id="x32-channel">
+	<template>
+		<style>
+			:host {
+				display: block;
+				width: 32px;
+				height: 32px;
+				padding: 3px;
+				@apply --layout-horizontal;
+				@apply --layout-center-center;
+			}
+
+			:host([darken]) {
+				opacity: 0.3;
+			}
+
+			img {
+				pointer-events: none;
+			}
+		</style>
+
+		<img src="[[importPath]]img/button-grey.png" hidden="[[muted]]">
+		<img src="[[importPath]]img/button-red.png" hidden="[[!muted]]">
+	</template>
+
+	<script src="x32-channel.js"></script>
+</dom-module>

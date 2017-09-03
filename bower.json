@@ -1,0 +1,26 @@
+{
+  "name": "x32-mute-matrix",
+  "description": "See and configure the mute status of all your X32's channels (on every mixbus) in one place.",
+  "main": "",
+  "authors": [
+    "Alex Van Camp <email@alexvan.camp>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/client/bower_components/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.2",
+    "font-roboto": "PolymerElements/font-roboto#^1.0.3",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0",
+    "paper-input": "PolymerElements/paper-input#^2.0.2",
+    "paper-button": "PolymerElements/paper-button#^2.0.0"
+  }
+}

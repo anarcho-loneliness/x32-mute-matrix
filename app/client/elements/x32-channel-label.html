@@ -1,0 +1,43 @@
+<dom-module id="x32-channel-label">
+	<template>
+		<style>
+			:host {
+				display: block;
+				position: relative;
+				width: 38px;
+				height: 166px;
+				@apply --layout-horizontal;
+			}
+
+			#label {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 160px;
+				height: 32px;
+				border: 2px solid var(--x32-channel-label-color);
+				color: var(--x32-channel-label-color);
+				background: black;
+				font-weight: 600;
+				padding: 0 8px;
+				margin: 3px;
+				white-space: nowrap;
+				box-sizing: border-box;
+				transform: rotate(-90deg) translateX(-32px);
+				transform-origin: top left;
+				pointer-events: none;
+				@apply --layout-horizontal;
+				@apply --layout-center;
+				@apply --layout-justified;
+				@apply --layout-flex-none;
+			}
+		</style>
+
+		<div id="label">
+			<span>[[channel.name]]</span>
+			<span>#[[_calcLabel(index)]]</span>
+		</div>
+	</template>
+
+	<script src="x32-channel-label.js"></script>
+</dom-module>
