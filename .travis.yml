@@ -1,27 +1,44 @@
 osx_image: xcode8.3
-language:
-  - ruby
-matrix:
-  include:
-    - os: linux
-    - os: osx
+
+dist: trusty
+sudo: false
+
+language: node_js
+node_js: "8"
+
 env:
   global:
-    - NODE_VERSION=8
+    - ELECTRON_CACHE=%HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
     # Deployment & code signing environment variables are declared in the project settings on Travis CI.
+
+os:
+  - linux
+  - osx
+
 cache:
   directories:
     - node_modules
     - app/node_modules
     - app/bower_components
-    - "$HOME/.electron"
-    - "$HOME/.npm"
-before_install:
-  - gem install --no-rdoc --no-ri fpm
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+    - $HOME/.npm/_prebuilds
+
+addons:
+  apt:
+    packages:
+      - libsecret-1-0
+
 install:
-  - nvm install $NODE_VERSION
   - npm install -g bower
   - npm install
+  - bower install
+
 script:
   - npm test
-  - npm run dist
+  - npm run release
+
+branches:
+  except:
+    - "/^v\\d+\\.\\d+\\.\\d+$/"

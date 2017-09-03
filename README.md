@@ -1,8 +1,8 @@
 # X32 Mute Matrix
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/lange/x32-mute-matrix.svg)](https://greenkeeper.io/)
-[![Windows status](https://ci.appveyor.com/api/projects/status/jtvfi9yin53y4es1/branch/master?svg=true)](https://ci.appveyor.com/project/Lange/x32-mute-matrix/branch/master)
-[![Linux & OSX Status](https://travis-ci.org/lange/x32-mute-matrix.svg?branch=master)](https://travis-ci.org/lange/x32-mute-matrix)
+[![Windows status](https://ci.appveyor.com/api/projects/status/jtvfi9yin53y4es1?svg=true)](https://ci.appveyor.com/project/Lange/dashboard)
+[![Linux & OSX status](https://travis-ci.org/Lange/x32-mute-matrix.svg?branch=master)](https://travis-ci.org/Lange/x32-mute-matrix)
 
 > See and configure the mute status of all your X32's channels (on every mixbus) in one place.
 

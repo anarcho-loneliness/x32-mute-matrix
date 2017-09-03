@@ -1,38 +1,25 @@
 'use strict';
 
-const os = require('os');
-const {autoUpdater, ipcMain} = require('electron');
-const {isDev, log, version} = require('./util');
-const UPDATE_SERVER_HOST = 'nodecg-dashboard-nuts.herokuapp.com';
+// Packages
+const autoUpdater = require('electron-updater').autoUpdater;
+const {ipcMain, app} = require('electron');
+const log = require('electron-log');
+
+// Ours
+const {isDev} = require('./util');
+
+autoUpdater.logger = log;
 
 module.exports = function (mainWindow) {
 	if (isDev) {
 		return;
 	}
 
-	autoUpdater.addListener('update-available', () => {
-		log('A new update is available');
+	autoUpdater.on('update-downloaded', info => {
+		mainWindow.webContents.send('updateDownloaded', info);
 	});
 
-	autoUpdater.addListener('update-downloaded', (event, releaseNotes, releaseName) => {
-		mainWindow.webContents.send('updateDownloaded', releaseName);
-	});
-
-	autoUpdater.addListener('error', error => {
-		log(error);
-	});
-
-	autoUpdater.addListener('checking-for-update', () => {
-		log('checking-for-update');
-	});
-
-	autoUpdater.addListener('update-not-available', () => {
-		log('update-not-available');
-	});
-
-	autoUpdater.setFeedURL(`https://${UPDATE_SERVER_HOST}/update/${os.platform()}_${os.arch()}/${version}`);
-
-	mainWindow.webContents.once('did-frame-finish-load', () => {
+	app.on('ready', () => {
 		autoUpdater.checkForUpdates();
 	});
 

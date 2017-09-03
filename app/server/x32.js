@@ -6,9 +6,7 @@ const X32_UDP_PORT = 10023;
 const getPort = require('get-port');
 const osc = require('osc');
 const {ipcMain} = require('electron');
-
-// Ours
-const {log} = require('./util');
+const log = require('electron-log');
 
 const mixbusMutes = [];
 let udpPort;
@@ -36,14 +34,14 @@ module.exports = {
 			metadata: true
 		});
 
-		broadcastPort.on('message', (message, timeTag, info) => {
+		broadcastPort.on('message', () => {
 			// console.log('got message:', message);
 			// console.log('timeTag:', timeTag);
 			// console.log('info:', info);
 		});
 
 		broadcastPort.on('error', error => {
-			log('[broadcast] Error:', error.stack);
+			log.error('[broadcast] Error:', error.stack);
 		});
 
 		broadcastPort.open();
@@ -69,8 +67,6 @@ module.exports = {
 				for (let c = 0; c < 32; c++) {
 					mixbusMutes[mixbusNumber - 1][c] = Boolean(valueBytes.readFloatBE(c * 4));
 				}
-			} else {
-				console.log(buf);
 			}
 		});
 
@@ -88,15 +84,15 @@ module.exports = {
 		}, 100);
 
 		udpPort.on('error', error => {
-			log('[osc] Error:', error.stack);
+			log.error('[osc] Error:', error.stack);
 		});
 
 		udpPort.on('open', () => {
-			log('[osc] X32 port open');
+			log.info('[osc] X32 port open');
 		});
 
 		udpPort.on('close', () => {
-			log('[osc] X32 port closed');
+			log.info('[osc] X32 port closed');
 		});
 
 		// Open the socket.

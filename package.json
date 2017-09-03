@@ -1,6 +1,6 @@
 {
   "name": "x32-mute-matrix",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "See and configure the mute status of all your X32's channels (on every mixbus) in one place.",
   "devDependencies": {
     "electron": "^1.7.5",
@@ -17,9 +17,11 @@
   "build": {
     "appId": "org.lange.x32-mute-matrix",
     "productName": "X32 Mute Matrix",
-    "squirrelWindows": {
-      "iconUrl": "https://raw.githubusercontent.com/lange/x32-mute-matrix/master/build/icon.ico"
-    },
+    "publish": [{
+      "provider": "github",
+      "owner": "lange",
+      "repo": "x32-mute-matrix"
+    }],
     "mac": {
       "category": "public.app-category.utilities"
     },
@@ -38,6 +40,13 @@
           "type": "file"
         }
       ]
+    },
+    "linux": {
+      "category": "Audio",
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     }
   },
   "scripts": {
@@ -46,6 +55,7 @@
     "postinstall": "electron-builder install-app-deps",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
+    "release": "electron-builder",
     "start": "electron app/server/main.js --enable-logging"
   }
 }

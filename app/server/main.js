@@ -6,10 +6,13 @@ const path = require('path');
 // Packages
 const windowStateKeeper = require('electron-window-state');
 const {app, BrowserWindow} = require('electron');
+const log = require('electron-log');
 
 // Ours
-const {version, log} = require('./util');
+const {version} = require('./util');
 
+log.file.level = 'debug';
+log.console.level = 'debug';
 require('electron-debug')({showDevTools: false});
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -42,7 +45,7 @@ app.on('ready', () => {
 	// Spin up the X32 lib
 	const x32 = require('./x32');
 	x32.init(mainWindow).catch(error => {
-		log(error);
+		log.error(error);
 	});
 
 	// Spin up the menu lib

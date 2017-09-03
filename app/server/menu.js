@@ -11,9 +11,7 @@ const path = require('path');
 
 // Packages
 const {app, BrowserWindow, Menu, ipcMain, shell} = require('electron');
-
-// Ours
-const {log} = require('./util');
+const log = require('electron-log');
 
 const userDataPath = app.getPath('userData');
 const recentPath = path.join(userDataPath, 'recentConnections.json');
@@ -22,7 +20,7 @@ const recentConnections = (function () {
 		try {
 			return JSON.parse(fs.readFileSync(recentPath, 'utf-8'));
 		} catch (e) {
-			log(e);
+			log.error(e);
 			return [];
 		}
 	}
@@ -97,7 +95,7 @@ function regenerateMenu() {
 					try {
 						fs.writeFileSync(recentPath, JSON.stringify(recentConnections), 'utf-8');
 					} catch (e) {
-						log(e);
+						log.error(e);
 					}
 
 					x32.setIpPort(ip, port);
