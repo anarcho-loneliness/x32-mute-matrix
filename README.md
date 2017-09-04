@@ -16,7 +16,6 @@ Check the [Releases](https://github.com/lange/x32-mute-matrix/releases) page to 
 Once installed, the application will autoupdate.
 
 ## Caveats
-- Right now, the channel and mixbus names and colors are hardcoded to the configuration used for Tip of the Hats 2017. Eventually, these values will be pulled dynamically from the mixer itself.
 - Does not yet show the Main or Mono mixes.
 - Does not yet show Aux or USB inputs or FX buses.
 
