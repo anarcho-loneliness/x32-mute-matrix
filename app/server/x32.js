@@ -77,31 +77,26 @@ module.exports = {
 			});
 		}, 5000);
 
-		udpPort.on('raw', buf => {
-			const str = buf.toString('ascii');
-			let valueBytes;
-
-			if (str.startsWith(`/mixMutes/`)) {
-				const mixbusNumber = parseInt(str.match(/\d+/)[0], 10);
-				if (typeof mixbusNumber !== 'number') {
-					return;
-				}
-
-				// Start reading values from after the header
-				valueBytes = buf.slice(buf.lastIndexOf(0x62) + 8);
-				for (let c = 0; c < NUM_CHANNELS; c++) {
-					mixbusMutes[mixbusNumber - 1][c] = Boolean(valueBytes.readFloatBE(c * 4));
-				}
-
-				sendToMainWindow('x32-mutes', mixbusMutes);
-			}
-		});
+		setInterval(() => {
+			sendToMainWindow('x32-mutes', mixbusMutes);
+		}, 100);
 
 		udpPort.on('message', oscBundle => {
 			if (oscBundle.address === '/channelConfigs') {
 				foo(new Buffer(oscBundle.args[0].value), 'channel');
 			} else if (oscBundle.address === '/busConfigs') {
 				foo(new Buffer(oscBundle.args[0].value), 'bus');
+			} else if (oscBundle.address.startsWith('/mixMutes/')) {
+				const mixbusNumber = parseInt(oscBundle.address.match(/\d+/)[0], 10);
+				if (typeof mixbusNumber !== 'number') {
+					return;
+				}
+
+				const blob = new Buffer(oscBundle.args[0].value);
+				for (let c = 0; c < NUM_CHANNELS; c++) {
+					const offset = BLOB_START_OFFSET + (c * 4);
+					mixbusMutes[mixbusNumber - 1][c] = Boolean(blob.readInt32LE(offset));
+				}
 			}
 		});
 
@@ -167,6 +162,9 @@ function renewSubscriptions() {
 		return;
 	}
 
+	// TODO: /config/buslink/1‐2
+
+	// Subscribe to the mute status of every channel on every mixbus.
 	for (let m = 0; m < NUM_MIXBUSES; m++) {
 		const formattedM = toFixed2(m);
 		udpPort.send({
@@ -179,10 +177,9 @@ function renewSubscriptions() {
 				{type: 'i', value: 4}
 			]
 		});
-
-		// TODO: /config/buslink/1‐2
 	}
 
+	// Subscribe to the name and color of every channel.
 	udpPort.send({
 		address: '/formatsubscribe',
 		args: [
@@ -195,6 +192,7 @@ function renewSubscriptions() {
 		]
 	});
 
+	// Subscribe to the name and color of every mixbus.
 	udpPort.send({
 		address: '/formatsubscribe',
 		args: [
