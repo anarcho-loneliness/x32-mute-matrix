@@ -28,7 +28,7 @@ build_script:
   - node --version
   - npm --version
   - npm test
-  - npm run release
+  - npm run dist
 
 test: off
 
