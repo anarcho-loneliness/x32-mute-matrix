@@ -83,9 +83,9 @@ module.exports = {
 
 		udpPort.on('message', oscBundle => {
 			if (oscBundle.address === '/channelConfigs') {
-				foo(new Buffer(oscBundle.args[0].value), 'channel');
+				parseChannelConfigs(new Buffer(oscBundle.args[0].value), 'channel');
 			} else if (oscBundle.address === '/busConfigs') {
-				foo(new Buffer(oscBundle.args[0].value), 'bus');
+				parseChannelConfigs(new Buffer(oscBundle.args[0].value), 'bus');
 			} else if (oscBundle.address.startsWith('/mixMutes/')) {
 				const mixbusNumber = parseInt(oscBundle.address.match(/\d+/)[0], 10);
 				if (typeof mixbusNumber !== 'number') {
@@ -99,20 +99,6 @@ module.exports = {
 				}
 			}
 		});
-
-		function foo(blob, type) {
-			const num = type === 'channel' ? NUM_CHANNELS : NUM_MIXBUSES;
-			const configs = new Array(num);
-			for (let c = 0; c < num; c++) {
-				const start = BLOB_START_OFFSET + (c * NAME_LEN_BYTES);
-				const end = blob.indexOf(0x00, start);
-				const name = blob.toString('ascii', start, end);
-				const color = blob.readInt32LE(BLOB_START_OFFSET + (num * NAME_LEN_BYTES) + (c * 4));
-				configs[c] = {name, color: COLOR_MAP[color]};
-			}
-
-			sendToMainWindow(`x32-${type}-configs`, configs);
-		}
 
 		udpPort.on('error', error => {
 			log.error('[osc] Error:', error.stack);
@@ -204,6 +190,20 @@ function renewSubscriptions() {
 			{type: 'i', value: 80}
 		]
 	});
+}
+
+function parseChannelConfigs(blob, type) {
+	const num = type === 'channel' ? NUM_CHANNELS : NUM_MIXBUSES;
+	const configs = new Array(num);
+	for (let c = 0; c < num; c++) {
+		const start = BLOB_START_OFFSET + (c * NAME_LEN_BYTES);
+		const end = blob.indexOf(0x00, start);
+		const name = blob.toString('ascii', start, end);
+		const color = blob.readInt32LE(BLOB_START_OFFSET + (num * NAME_LEN_BYTES) + (c * 4));
+		configs[c] = {name, color: COLOR_MAP[color]};
+	}
+
+	sendToMainWindow(`x32-${type}-configs`, configs);
 }
 
 function toFixed2(num) {
