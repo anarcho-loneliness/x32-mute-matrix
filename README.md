@@ -15,10 +15,6 @@ Sometimes, as the operator of an audio mixer, you just really want to see (and c
 Check the [Releases](https://github.com/lange/x32-mute-matrix/releases) page to grab the latest installer for your operating system.
 Once installed, the application will autoupdate.
 
-## Caveats
-- Does not yet show the Main or Mono mixes.
-- Does not yet show Aux or USB inputs or FX buses.
-
 ## Credits
 Developed by [Alex Van Camp](https://twitter.com/vancamp)  
 Assets and additional design by [Chris Hanel](https://twitter.com/chrishanel)
