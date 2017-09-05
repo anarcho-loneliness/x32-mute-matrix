@@ -10,6 +10,7 @@
 		<style>
 			:host {
 				display: block;
+				position: relative;
 				font-family: Roboto, sans-serif;
 				align-items: flex-start;
 				user-select: none;
@@ -19,6 +20,10 @@
 			#channelLabels {
 				margin-left: 163px;
 				@apply --layout-horizontal;
+			}
+
+			x32-channel-label:nth-of-type(32) {
+				margin-right: 9px;
 			}
 
 			x32-row:first-of-type,
@@ -36,6 +41,15 @@
 				height: 1px;
 				background: white;
 				pointer-events: none;
+			}
+
+			#auxDivider {
+				position: absolute;
+				height: 100%;
+				width: 1px;
+				top: 0;
+				left: 1383px;
+				background: wheat;
 			}
 		</style>
 
@@ -63,6 +77,8 @@
 				on-column-mouseleave="_handleColumnMouseLeave">
 			</x32-row>
 		</template>
+
+		<div id="auxDivider"></div>
 	</template>
 
 	<script src="x32-app.js"></script>

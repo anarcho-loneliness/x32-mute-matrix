@@ -1,9 +1,15 @@
 'use strict';
 
+// Packages
+const getPort = require('get-port');
+const osc = require('osc');
+const {ipcMain} = require('electron');
+const log = require('electron-log');
+
 const BLOB_START_OFFSET = 4;
 const NAME_LEN_BYTES = 32;
-const NUM_CHANNELS = 32;
 const NUM_AUX_INS = 8;
+const NUM_CHANNELS = 32;
 const NUM_CHANNELS_AND_AUX_INS = NUM_CHANNELS + NUM_AUX_INS;
 const NUM_MIXBUSES = 16;
 const X32_UDP_PORT = 10023;
@@ -26,17 +32,11 @@ const COLOR_MAP = [
 	'WHi'
 ];
 
-// Packages
-const getPort = require('get-port');
-const osc = require('osc');
-const {ipcMain} = require('electron');
-const log = require('electron-log');
-
-const lastConfigs = {};
 let udpPort;
 let broadcastPort;
 let mainWindow;
-let changeWaiting = false;
+let mutesChangeWaiting = false;
+let configsChangeWaiting = false;
 
 const muteArrayProxyHandler = {
 	set(target, prop, newVal) {
@@ -45,7 +45,19 @@ const muteArrayProxyHandler = {
 		}
 
 		target[prop] = newVal;
-		changeWaiting = true;
+		mutesChangeWaiting = true;
+		return true;
+	}
+};
+
+const channelConfigProxyHandler = {
+	set(target, prop, newVal) {
+		if (target[prop] === newVal) {
+			return true;
+		}
+
+		target[prop] = newVal;
+		configsChangeWaiting = true;
 		return true;
 	}
 };
@@ -73,8 +85,21 @@ const mutes = {
 
 const mutesKeyOrder = Object.keys(mutes);
 
-function makeMutesArrayProxy() {
-	return new Proxy(new Array(NUM_CHANNELS_AND_AUX_INS).fill(false), muteArrayProxyHandler);
+const configs = {};
+for (let c = 0; c < NUM_CHANNELS; c++) {
+	const fixedC = toFixed2(c);
+	const name = `channel${fixedC}`;
+	configs[name] = makeConfigProxy({name, label: `Ch ${fixedC}`});
+}
+for (let a = 0; a < NUM_AUX_INS; a++) {
+	const fixedA = toFixed2(a);
+	const name = `auxin${fixedA}`;
+	configs[name] = makeConfigProxy({name, label: `Aux ${fixedA}`});
+}
+for (let m = 0; m < NUM_MIXBUSES; m++) {
+	const fixedM = toFixed2(m);
+	const name = `mixbus${fixedM}`;
+	configs[name] = makeConfigProxy({name, label: `Bus ${fixedM}`});
 }
 
 module.exports = {
@@ -111,13 +136,15 @@ module.exports = {
 
 		udpPort.on('message', oscBundle => {
 			if (oscBundle.address === '/channelConfigs') {
-				parseChannelConfigs(new Buffer(oscBundle.args[0].value), 'channel');
-			} else if (oscBundle.address === '/busConfigs') {
-				parseChannelConfigs(new Buffer(oscBundle.args[0].value), 'bus');
+				parseConfigs(new Buffer(oscBundle.args[0].value), 'channel');
+			} else if (oscBundle.address === '/mixbusConfigs') {
+				parseConfigs(new Buffer(oscBundle.args[0].value), 'mixbus');
+			} else if (oscBundle.address === '/auxinConfigs') {
+				parseConfigs(new Buffer(oscBundle.args[0].value), 'auxin');
 			} else if (oscBundle.address.startsWith('/mixMutes/')) {
 				const busName = oscBundle.address.substr(10);
 				const blob = new Buffer(oscBundle.args[0].value);
-				for (let channelNumber = 0; channelNumber < NUM_CHANNELS; channelNumber++) {
+				for (let channelNumber = 0; channelNumber < NUM_CHANNELS_AND_AUX_INS; channelNumber++) {
 					const offset = BLOB_START_OFFSET + (channelNumber * 4);
 					mutes[busName][channelNumber] = Boolean(blob.readInt32LE(offset));
 				}
@@ -144,9 +171,14 @@ module.exports = {
 			}, 5000);
 
 			setInterval(() => {
-				if (changeWaiting) {
+				if (mutesChangeWaiting) {
 					sendToMainWindow('x32-mutes', mutes, mutesKeyOrder);
-					changeWaiting = false;
+					mutesChangeWaiting = false;
+				}
+
+				if (configsChangeWaiting) {
+					sendToMainWindow('x32-configs', configs);
+					configsChangeWaiting = false;
 				}
 			}, 10);
 
@@ -157,12 +189,21 @@ module.exports = {
 		// Open the socket.
 		udpPort.open();
 
-		ipcMain.on('toggle', (event, {busName, channel}) => {
+		ipcMain.on('toggle', (event, {busName, channelIndex}) => {
 			if (!udpPortIsConfigured()) {
 				return;
 			}
 
-			let address = `/ch/${toFixed2(channel)}/mix`;
+			const absChannelIndex = channelIndex;
+			let address;
+			if (channelIndex < NUM_CHANNELS) {
+				address = '/ch';
+			} else {
+				address = '/auxin';
+				channelIndex -= NUM_CHANNELS;
+			}
+
+			address += `/${toFixed2(channelIndex)}/mix`;
 			switch (true) {
 				case busName === 'main':
 					address += '/on';
@@ -180,7 +221,7 @@ module.exports = {
 					// Do nothing;
 			}
 
-			const newVal = mutes[busName][channel] ? 'OFF' : 'ON';
+			const newVal = mutes[busName][absChannelIndex] ? 'OFF' : 'ON';
 			log.debug('Toggling %s to %s', address, newVal);
 
 			udpPort.send({
@@ -193,16 +234,9 @@ module.exports = {
 
 		ipcMain.on('init', () => {
 			sendToMainWindow('x32-mutes', mutes, mutesKeyOrder);
-
-			for (const type in lastConfigs) {
-				if (!{}.hasOwnProperty.call(lastConfigs, type)) {
-					continue;
-				}
-
-				sendToMainWindow(`x32-${type}-configs`, lastConfigs[type]);
-			}
-
-			changeWaiting = false;
+			sendToMainWindow(`x32-configs`, configs);
+			mutesChangeWaiting = false;
+			configsChangeWaiting = false;
 		});
 	},
 
@@ -285,11 +319,24 @@ function renewSubscriptions() {
 		]
 	});
 
+	// Subscribe to the name and color of every aux in.
+	udpPort.send({
+		address: '/formatsubscribe',
+		args: [
+			{type: 's', value: '/auxinConfigs'},
+			{type: 's', value: '/auxin/**/config/name'},
+			{type: 's', value: '/auxin/**/config/color'},
+			{type: 'i', value: 1},
+			{type: 'i', value: NUM_AUX_INS},
+			{type: 'i', value: 80}
+		]
+	});
+
 	// Subscribe to the name and color of every mixbus.
 	udpPort.send({
 		address: '/formatsubscribe',
 		args: [
-			{type: 's', value: '/busConfigs'},
+			{type: 's', value: '/mixbusConfigs'},
 			{type: 's', value: '/bus/**/config/name'},
 			{type: 's', value: '/bus/**/config/color'},
 			{type: 'i', value: 1},
@@ -299,22 +346,38 @@ function renewSubscriptions() {
 	});
 }
 
-function parseChannelConfigs(blob, type) {
-	const num = type === 'channel' ? NUM_CHANNELS : NUM_MIXBUSES;
-	const configs = new Array(num);
-	for (let c = 0; c < num; c++) {
-		const start = BLOB_START_OFFSET + (c * NAME_LEN_BYTES);
-		const end = blob.indexOf(0x00, start);
-		const label = blob.toString('ascii', start, end);
-		const color = blob.readInt32LE(BLOB_START_OFFSET + (num * NAME_LEN_BYTES) + (c * 4));
-		configs[c] = {label, color: COLOR_MAP[color]};
+function parseConfigs(blob, type) {
+	let num = 0;
+	switch (type) {
+		case 'channel':
+			num = NUM_CHANNELS;
+			break;
+		case 'mixbus':
+			num = NUM_MIXBUSES;
+			break;
+		case 'auxin':
+			num = NUM_AUX_INS;
+			break;
+		default:
+			// Do nothing and return.
+			return;
 	}
 
-	lastConfigs[type] = configs;
-	sendToMainWindow(`x32-${type}-configs`, configs);
+	for (let i = 0; i < num; i++) {
+		const start = BLOB_START_OFFSET + (i * NAME_LEN_BYTES);
+		const end = blob.indexOf(0x00, start);
+		const label = blob.toString('ascii', start, end);
+		const color = blob.readInt32LE(BLOB_START_OFFSET + (num * NAME_LEN_BYTES) + (i * 4));
+		if (label) {
+			configs[`${type}${toFixed2(i)}`].label = label;
+		}
+
+		configs[`${type}${toFixed2(i)}`].color = COLOR_MAP[color];
+	}
 }
 
 function toFixed2(num) {
+	num = parseInt(num, 10);
 	num += 1;
 	return num < 10 ? `0${num}` : num;
 }
@@ -329,4 +392,16 @@ function sendToMainWindow(...args) {
 	}
 
 	mainWindow.webContents.send(...args);
+}
+
+function makeMutesArrayProxy() {
+	return new Proxy(new Array(NUM_CHANNELS_AND_AUX_INS).fill(false), muteArrayProxyHandler);
+}
+
+function makeConfigProxy({name = '', label = ''} = {}) {
+	return new Proxy({
+		name,
+		label,
+		color: 'OFF'
+	}, channelConfigProxyHandler);
 }

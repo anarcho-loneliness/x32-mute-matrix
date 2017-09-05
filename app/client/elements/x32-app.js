@@ -40,7 +40,7 @@
 					type: Array,
 					value() {
 						const arr = [];
-						for (let i = 0; i < 32; i++) {
+						for (let i = 0; i < 40; i++) {
 							arr.push({});
 						}
 						return arr;
@@ -75,11 +75,31 @@
 				});
 			});
 
-			ipcRenderer.on('x32-channel-configs', (event, configs) => {
-				this.channels.forEach((channel, index) => {
-					this.set(`channels.${index}.label`, configs[index].label);
-					this.set(`channels.${index}.color`, configs[index].color);
-				});
+			ipcRenderer.on('x32-configs', (event, configs) => {
+				for (const key in configs) {
+					if (!{}.hasOwnProperty.call(configs, key)) {
+						continue;
+					}
+
+					const index = parseInt(key.match(/\d+$/)[0], 10);
+					let path = '';
+					switch (true) {
+						case key.startsWith('channel'):
+							path = `channels.${index - 1}`;
+							break;
+						case key.startsWith('auxin'):
+							path = `channels.${index + 31}`;
+							break;
+						case key.startsWith('mixbus'):
+							path = `buses.${index}`;
+							break;
+						default:
+							// Do nothing.
+					}
+
+					this.set(`${path}.label`, configs[key].label);
+					this.set(`${path}.color`, configs[key].color);
+				}
 			});
 
 			ipcRenderer.on('x32-bus-configs', (event, configs) => {
