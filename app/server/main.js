@@ -37,10 +37,6 @@ app.on('ready', () => {
 		title: `X32 Mute Matrix v${version}`
 	});
 
-	mainWindow.on('close', () => {
-
-	});
-
 	// Quit when main window is closed.
 	mainWindow.on('closed', () => {
 		app.quit();
