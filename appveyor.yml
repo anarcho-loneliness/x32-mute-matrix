@@ -34,5 +34,5 @@ test: off
 
 branches:
   except:
-    - "/^v\\d+\\.\\d+\\.\\d+$/"
+    - "/^chore\(release\)/"
 

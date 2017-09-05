@@ -1,6 +1,6 @@
 {
   "name": "x32-mute-matrix",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "See and configure the mute status of all your X32's channels (on every mixbus) in one place.",
   "devDependencies": {
     "electron": "^1.7.5",
@@ -68,7 +68,8 @@
   },
   "standard-version": {
     "skip": {
-      "bump": true
+      "bump": true,
+      "tag": true
     }
   }
 }
