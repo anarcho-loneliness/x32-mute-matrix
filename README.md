@@ -11,6 +11,21 @@
 ## Motivation
 Sometimes, as the operator of an audio mixer, you just really want to see (and configure) the mute status of every channel on every bus. This lets you do that.
 
+## Features
+- Manage and monitor the mute status of all 32 main inputs and 8 aux inputs on the Main bus, all 16 mixbuses, and the mono bus.
+- Connection history that remembers device addresses that have been connected to in the past.
+- Installers available for Windows, macOS, and Linux.
+
+## Planned Features
+- Stereo bus on/off
+- Redesigned row and column headers
+- Automatic discovery of X32/M32 devices
+- Connection status indicator
+- Automatic reconnection to previous device on program start
+- Collapsing/folding of linked channels & buses
+- Choose which channels and buses to show or hide
+- iOS and Android support
+
 ## Installation
 Check the [Releases](https://github.com/lange/x32-mute-matrix/releases) page to grab the latest installer for your operating system.
 Once installed, the application will autoupdate.
