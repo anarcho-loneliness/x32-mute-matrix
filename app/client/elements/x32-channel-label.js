@@ -76,7 +76,7 @@ class X32ChannelLabel extends Polymer.Element {
 		}
 	}
 
-	_calcLabel(index) {
+	_calcDisplayIndex(index) {
 		return index + 1;
 	}
 }

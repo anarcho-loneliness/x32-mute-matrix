@@ -17,10 +17,22 @@
 				buses: {
 					type: Array,
 					value() {
-						const arr = [];
+						const arr = [{
+							name: 'main',
+							label: 'Main'
+						}];
+
 						for (let i = 0; i < 16; i++) {
-							arr.push({});
+							arr.push({
+								name: `mixbus${toFixed2(i)}`
+							});
 						}
+
+						arr.push({
+							name: 'mono',
+							label: 'Mono'
+						});
+
 						return arr;
 					}
 				},
@@ -54,27 +66,34 @@
 				this.set(`buses.${index}.channels`, clone(this.channels));
 			});
 
-			ipcRenderer.on('x32-mutes', (event, mutes) => {
+			ipcRenderer.on('x32-mutes', (event, mutes, mutesKeyOrder) => {
 				this.buses.forEach((bus, busIndex) => {
 					bus.channels.forEach((channel, channelIndex) => {
-						this.set(`buses.${busIndex}.channels.${channelIndex}.muted`, !mutes[busIndex][channelIndex]);
+						const values = mutes[mutesKeyOrder[busIndex]];
+						this.set(`buses.${busIndex}.channels.${channelIndex}.muted`, !values[channelIndex]);
 					});
 				});
 			});
 
 			ipcRenderer.on('x32-channel-configs', (event, configs) => {
 				this.channels.forEach((channel, index) => {
-					this.set(`channels.${index}.name`, configs[index].name);
+					this.set(`channels.${index}.label`, configs[index].label);
 					this.set(`channels.${index}.color`, configs[index].color);
 				});
 			});
 
 			ipcRenderer.on('x32-bus-configs', (event, configs) => {
 				this.buses.forEach((bus, index) => {
-					this.set(`buses.${index}.name`, configs[index].name);
-					this.set(`buses.${index}.color`, configs[index].color);
+					if (!bus.name.startsWith('mixbus')) {
+						return;
+					}
+
+					this.set(`buses.${index}.label`, configs[index - 1].label);
+					this.set(`buses.${index}.color`, configs[index - 1].color);
 				});
 			});
+
+			ipcRenderer.send('init');
 		}
 
 		_handleColumnLabelMouseEnter(e) {
@@ -106,6 +125,11 @@
 
 	function clone(object) {
 		return JSON.parse(JSON.stringify(object));
+	}
+
+	function toFixed2(num) {
+		num += 1;
+		return num < 10 ? `0${num}` : num;
 	}
 
 	customElements.define(X32App.is, X32App);

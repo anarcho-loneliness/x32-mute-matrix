@@ -9,6 +9,7 @@
 		<style>
 			:host {
 				display: block;
+				position: relative;
 				@apply --layout-horizontal;
 			}
 
@@ -22,15 +23,27 @@
 				margin: 3px;
 				margin-left: 0;
 				box-sizing: border-box;
+				white-space: nowrap;
 				@apply --layout-horizontal;
 				@apply --layout-center;
 				@apply --layout-justified;
 			}
+
+			#label-label {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				@apply --layout-flex;
+			}
+
+			#label-num {
+				margin-left: 6px;
+				@apply --layout-flex-none;
+			}
 		</style>
 
 		<div id="label">
-			<span>[[bus.name]]</span>
-			<span>#[[_calcLabel(index)]]</span>
+			<span id="label-label">[[bus.label]]</span>
+			<span id="label-num">[[_calcDisplayIndex(bus.name)]]</span>
 		</div>
 
 		<template is="dom-repeat" items="[[bus.channels]]" as="channel" index-as="channelIndex">

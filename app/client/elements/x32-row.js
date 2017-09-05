@@ -83,7 +83,7 @@
 
 		_handleChannelTap(e) {
 			ipcRenderer.send('toggle', {
-				mixbus: this.index,
+				busName: this.bus.name,
 				channel: e.target.index
 			});
 		}
@@ -122,8 +122,10 @@
 			return highlightRow !== row && highlightColumn !== column;
 		}
 
-		_calcLabel(index) {
-			return index + 1;
+		_calcDisplayIndex(busName) {
+			if (busName.startsWith('mixbus')) {
+				return `#${busName.substr(6)}`;
+			}
 		}
 	}
 
