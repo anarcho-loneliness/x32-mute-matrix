@@ -70,7 +70,7 @@ class X32ChannelLabel extends Polymer.Element {
 
 	_highlightColumnChanged(newVal) {
 		if (typeof newVal === 'number' && newVal !== this.index) {
-			this.style.opacity = '0.3';
+			this.style.opacity = 'var(--x32-app-dim-opacity)';
 		} else {
 			this.style.opacity = '';
 		}

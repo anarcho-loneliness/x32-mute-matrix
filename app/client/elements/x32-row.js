@@ -75,7 +75,7 @@
 
 		_highlightsChanged(highlightRow) {
 			if (typeof highlightRow === 'number' && highlightRow !== this.index) {
-				this.$.label.style.opacity = '0.3';
+				this.$.label.style.opacity = 'var(--x32-app-dim-opacity)';
 			} else {
 				this.$.label.style.opacity = '';
 			}
