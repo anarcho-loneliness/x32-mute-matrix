@@ -113,6 +113,11 @@
 				});
 			});
 
+			ipcRenderer.on('updateDownloaded', (event, info) => {
+				this.$['updateDialog-label'].innerText = `A new version (${info.version}) is ready to install. Would you like to install it now?`;
+				this.$.updateDialog.open();
+			});
+
 			ipcRenderer.send('init');
 		}
 
@@ -140,6 +145,12 @@
 
 		_handleColumnMouseLeave() {
 			this.highlightColumn = null;
+		}
+
+		_handleUpdateDialogClosed(e) {
+			if (e.detail.confirmed) {
+				ipcRenderer.send('installUpdateNow');
+			}
 		}
 	}
 

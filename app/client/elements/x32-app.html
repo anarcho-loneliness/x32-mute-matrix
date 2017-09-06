@@ -1,5 +1,7 @@
 <link rel="import" href="../bower_components/font-roboto/roboto.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="x32-channel-label.html">
@@ -80,6 +82,17 @@
 		</template>
 
 		<div id="auxDivider"></div>
+
+		<paper-dialog id="updateDialog" modal on-iron-overlay-closed="_handleUpdateDialogClosed">
+			<h2>Update Available</h2>
+
+			<p id="updateDialog-label"></p>
+
+			<div class="buttons">
+				<paper-button dialog-dismiss>No, Later</paper-button>
+				<paper-button dialog-confirm autofocus>Yes, Update & Restart Now</paper-button>
+			</div>
+		</paper-dialog>
 	</template>
 
 	<script src="x32-app.js"></script>
