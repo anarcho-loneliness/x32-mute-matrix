@@ -126,6 +126,8 @@
 		connectedCallback() {
 			super.connectedCallback();
 			Polymer.RenderStatus.beforeNextRender(this, () => {
+				// This is a performance optimization, which prevents
+				// needing to continually re-evaluate the CSS Custom Property.
 				window.x32AppDarkenedOpacity = parseFloat(this.readCSSCustomProperty('--x32-app-dim-opacity'));
 			});
 		}
