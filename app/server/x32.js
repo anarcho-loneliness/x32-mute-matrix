@@ -136,14 +136,14 @@ module.exports = {
 
 		udpPort.on('message', oscBundle => {
 			if (oscBundle.address === '/channelConfigs') {
-				parseConfigs(new Buffer(oscBundle.args[0].value), 'channel');
+				parseConfigs(Buffer.from(oscBundle.args[0].value), 'channel');
 			} else if (oscBundle.address === '/mixbusConfigs') {
-				parseConfigs(new Buffer(oscBundle.args[0].value), 'mixbus');
+				parseConfigs(Buffer.from(oscBundle.args[0].value), 'mixbus');
 			} else if (oscBundle.address === '/auxinConfigs') {
-				parseConfigs(new Buffer(oscBundle.args[0].value), 'auxin');
+				parseConfigs(Buffer.from(oscBundle.args[0].value), 'auxin');
 			} else if (oscBundle.address.startsWith('/mixMutes/')) {
 				const busName = oscBundle.address.substr(10);
-				const blob = new Buffer(oscBundle.args[0].value);
+				const blob = Buffer.from(oscBundle.args[0].value);
 				for (let channelNumber = 0; channelNumber < NUM_CHANNELS_AND_AUX_INS; channelNumber++) {
 					const offset = BLOB_START_OFFSET + (channelNumber * 4);
 					mutes[busName][channelNumber] = Boolean(blob.readInt32LE(offset));
