@@ -17,10 +17,10 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.2",
+    "polymer": "Polymer/polymer#^2.2.0",
     "font-roboto": "PolymerElements/font-roboto#^1.0.3",
-    "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0",
-    "paper-input": "PolymerElements/paper-input#^2.0.2",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.1",
+    "paper-input": "PolymerElements/paper-input#^2.0.3",
     "paper-button": "PolymerElements/paper-button#^2.0.0",
     "paper-dialog": "PolymerElements/paper-dialog#^2.0.0"
   }

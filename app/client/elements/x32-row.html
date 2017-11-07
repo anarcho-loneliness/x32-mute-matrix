@@ -10,6 +10,8 @@
 			:host {
 				display: block;
 				position: relative;
+				height: 38px;
+				contain: strict;
 				@apply --layout-horizontal;
 			}
 
@@ -24,6 +26,7 @@
 				margin-left: 0;
 				box-sizing: border-box;
 				white-space: nowrap;
+				will-change: opacity;
 				@apply --layout-horizontal;
 				@apply --layout-center;
 				@apply --layout-justified;

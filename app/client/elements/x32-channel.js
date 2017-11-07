@@ -24,7 +24,7 @@ class X32Channel extends Polymer.Element {
 			},
 			darken: {
 				type: Boolean,
-				reflectToAttribute: true
+				observer: '_darkenChanged'
 			}
 		};
 	}
@@ -35,6 +35,10 @@ class X32Channel extends Polymer.Element {
 
 	_computeName(name) {
 		return name;
+	}
+
+	_darkenChanged(newVal) {
+		this.style.opacity = newVal ? window.x32AppDarkenedOpacity : 1;
 	}
 }
 

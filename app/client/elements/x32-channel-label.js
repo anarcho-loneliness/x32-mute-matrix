@@ -69,11 +69,9 @@ class X32ChannelLabel extends Polymer.Element {
 	}
 
 	_highlightColumnChanged(newVal) {
-		if (typeof newVal === 'number' && newVal !== this.index) {
-			this.style.opacity = 'var(--x32-app-dim-opacity)';
-		} else {
-			this.style.opacity = '';
-		}
+		this.style.opacity = (typeof newVal === 'number' && newVal !== this.index) ?
+			window.x32AppDarkenedOpacity :
+			'';
 	}
 
 	_calcDisplayIndex(index) {

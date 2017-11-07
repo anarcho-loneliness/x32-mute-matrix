@@ -6,12 +6,10 @@
 				width: 32px;
 				height: 32px;
 				padding: 3px;
+				will-change: opacity;
+				contain: strict;
 				@apply --layout-horizontal;
 				@apply --layout-center-center;
-			}
-
-			:host([darken]) {
-				opacity: var(--x32-app-dim-opacity);
 			}
 
 			img {

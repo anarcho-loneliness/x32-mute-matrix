@@ -2,6 +2,7 @@
 	'use strict';
 
 	const {ipcRenderer} = require('electron');
+	Polymer.setPassiveTouchGestures(true); // Added in Polymer v2.1.0
 
 	/**
 	 * @customElement
@@ -60,6 +61,7 @@
 		}
 
 		ready() {
+			this._updateHighlights = this._updateHighlights.bind(this);
 			super.ready();
 
 			this.buses.forEach((bus, index) => {
@@ -121,30 +123,64 @@
 			ipcRenderer.send('init');
 		}
 
+		connectedCallback() {
+			super.connectedCallback();
+			Polymer.RenderStatus.beforeNextRender(this, () => {
+				window.x32AppDarkenedOpacity = parseFloat(this.readCSSCustomProperty('--x32-app-dim-opacity'));
+			});
+		}
+
+		readCSSCustomProperty(prop) {
+			if ('ShadyCSS' in window) {
+				return window.ShadyCSS.getComputedStyleValue(this, prop);
+			}
+
+			return getComputedStyle(this, prop);
+		}
+
+		_debounceUpdateHighlights() {
+			this._debouncedDangThing = Polymer.Debouncer.debounce(
+				this._debouncedDangThing,
+				Polymer.Async.timeOut.after(0),
+				this._updateHighlights
+			);
+		}
+
+		_updateHighlights() {
+			this.highlightColumn = this._pendingHighlightColumn;
+			this.highlightRow = this._pendingHighlightRow;
+		}
+
 		_handleColumnLabelMouseEnter(e) {
-			this.highlightColumn = e.target.index;
-			this.highlightRow = 'all';
+			this._pendingHighlightColumn = e.target.index;
+			this._pendingHighlightRow = 'all';
+			this._debounceUpdateHighlights();
 		}
 
 		_handleColumnLabelMouseLeave() {
-			this.highlightColumn = null;
-			this.highlightRow = null;
+			this._pendingHighlightColumn = null;
+			this._pendingHighlightRow = null;
+			this._debounceUpdateHighlights();
 		}
 
 		_handleRowMouseEnter(e) {
-			this.highlightRow = e.target.index;
+			this._pendingHighlightRow = e.target.index;
+			this._debounceUpdateHighlights();
 		}
 
 		_handleRowMouseLeave() {
-			this.highlightRow = null;
+			this._pendingHighlightRow = null;
+			this._debounceUpdateHighlights();
 		}
 
 		_handleColumnMouseEnter(e) {
-			this.highlightColumn = e.detail.column;
+			this._pendingHighlightColumn = e.detail.column;
+			this._debounceUpdateHighlights();
 		}
 
 		_handleColumnMouseLeave() {
-			this.highlightColumn = null;
+			this._pendingHighlightColumn = null;
+			this._debounceUpdateHighlights();
 		}
 
 		_handleUpdateDialogClosed(e) {
