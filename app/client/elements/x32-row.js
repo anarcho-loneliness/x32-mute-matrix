@@ -2,6 +2,7 @@
 	'use strict';
 
 	const {ipcRenderer} = require('electron');
+	const colorizeLabel = require('../lib/colorize-label');
 
 	/**
 	 * @customElement
@@ -30,47 +31,7 @@
 		}
 
 		updateColor(newColorCode) {
-			let hexColor;
-			switch (newColorCode) {
-				case 'BL':
-				case 'BLi':
-					hexColor = '#0000FF';
-					break;
-				case 'CY':
-				case 'CYi':
-					hexColor = '#00FFFF';
-					break;
-				case 'GN':
-				case 'GNi':
-					hexColor = '#00FF00';
-					break;
-				case 'MG':
-				case 'MGi':
-					hexColor = '#FF00FF';
-					break;
-				case 'OFF':
-				case 'OFFi':
-					hexColor = '#808080';
-					break;
-				case 'RD':
-				case 'RDi':
-					hexColor = '#FF0000';
-					break;
-				case 'WH':
-				case 'WHi':
-					hexColor = '#FFFFFF';
-					break;
-				case 'YE':
-				case 'YEi':
-					hexColor = '#FFFF00';
-					break;
-				default:
-					// Do nothing.
-			}
-
-			this.updateStyles({
-				'--x32-row-color': hexColor
-			});
+			colorizeLabel(newColorCode, this.$.label);
 		}
 
 		_highlightsChanged(highlightRow) {
