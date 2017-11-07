@@ -89,25 +89,31 @@
 		}
 
 		_handleChannelMouseEnter(e) {
-			this.dispatchEvent(new CustomEvent('column-mouseenter', {
+			const customEvent = new CustomEvent('column-mouseenter', {
 				detail: {
 					row: this.index,
 					column: e.target.index
 				},
 				bubbles: true,
 				composed: true
-			}));
+			});
+			customEvent.x = e.x;
+			customEvent.y = e.y;
+			this.dispatchEvent(customEvent);
 		}
 
 		_handleChannelMouseLeave(e) {
-			this.dispatchEvent(new CustomEvent('column-mouseleave', {
+			const customEvent = new CustomEvent('column-mouseleave', {
 				detail: {
 					row: this.index,
 					column: e.target.index
 				},
 				bubbles: true,
 				composed: true
-			}));
+			});
+			customEvent.x = e.x;
+			customEvent.y = e.y;
+			this.dispatchEvent(customEvent);
 		}
 
 		_calcDarken(highlightRow, highlightColumn, row, column) {
