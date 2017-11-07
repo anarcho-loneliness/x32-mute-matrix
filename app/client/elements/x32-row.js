@@ -124,7 +124,7 @@
 
 		_calcDisplayIndex(busName) {
 			if (busName.startsWith('mixbus')) {
-				return `#${busName.substr(6)}`;
+				return `#${parseInt(busName.substr(6), 10)}`;
 			}
 		}
 	}
