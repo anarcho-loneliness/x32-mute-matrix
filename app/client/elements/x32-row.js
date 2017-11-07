@@ -74,11 +74,9 @@
 		}
 
 		_highlightsChanged(highlightRow) {
-			if (typeof highlightRow === 'number' && highlightRow !== this.index) {
-				this.$.label.style.opacity = 'var(--x32-app-dim-opacity)';
-			} else {
-				this.$.label.style.opacity = '';
-			}
+			this.$.label.style.opacity = (typeof highlightRow === 'number' && highlightRow !== this.index) ?
+				window.x32AppDarkenedOpacity :
+				1;
 		}
 
 		_handleChannelToggle(e) {
