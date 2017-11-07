@@ -81,7 +81,7 @@
 			}
 		}
 
-		_handleChannelTap(e) {
+		_handleChannelToggle(e) {
 			ipcRenderer.send('toggle', {
 				busName: this.bus.name,
 				channelIndex: e.target.index

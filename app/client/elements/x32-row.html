@@ -58,7 +58,8 @@
 				channel="[[channel]]"
 				index="[[channelIndex]]"
 				darken="[[_calcDarken(highlightRow, highlightColumn, index, channelIndex)]]"
-				on-tap="_handleChannelTap"
+				on-toggle="_handleChannelToggle"
+				on-mousedown="_handleChannelToggle"
 				on-mouseenter="_handleChannelMouseEnter"
 				on-mouseleave="_handleChannelMouseLeave">
 			</x32-channel>

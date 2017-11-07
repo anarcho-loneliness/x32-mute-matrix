@@ -29,6 +29,29 @@ class X32Channel extends Polymer.Element {
 		};
 	}
 
+	ready() {
+		super.ready();
+		this.addEventListener('mousedown', () => {
+			X32Channel._mouseDown = true;
+			X32Channel._dragToggleState = !this.muted;
+		}, {passive: true});
+		this.addEventListener('mouseup', () => {
+			X32Channel._mouseDown = false;
+		}, {passive: true});
+		this.addEventListener('mouseenter', () => {
+			if (X32Channel._mouseDown && this.muted !== X32Channel._dragToggleState) {
+				this.toggle();
+			}
+		}, {passive: true});
+	}
+
+	toggle() {
+		this.dispatchEvent(new CustomEvent('toggle', {
+			bubbles: false,
+			composed: false
+		}));
+	}
+
 	_computeMuted(muted) {
 		return Boolean(muted);
 	}
