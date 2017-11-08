@@ -104,17 +104,6 @@
 				}
 			});
 
-			ipcRenderer.on('x32-bus-configs', (event, configs) => {
-				this.buses.forEach((bus, index) => {
-					if (!bus.name.startsWith('mixbus')) {
-						return;
-					}
-
-					this.set(`buses.${index}.label`, configs[index - 1].label);
-					this.set(`buses.${index}.color`, configs[index - 1].color);
-				});
-			});
-
 			ipcRenderer.on('updateDownloaded', (event, info) => {
 				this.$['updateDialog-label'].innerText = `A new version (${info.version}) is ready to install. Would you like to install it now?`;
 				this.$.updateDialog.open();
