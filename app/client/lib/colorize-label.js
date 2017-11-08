@@ -82,7 +82,7 @@ module.exports = function (colorCode, labelElement) {
 			break;
 
 		default:
-		// Do nothing.
+			// Do nothing.
 	}
 
 	if (inverted) {
