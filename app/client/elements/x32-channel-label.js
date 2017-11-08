@@ -30,7 +30,8 @@
 		}
 
 		updateColor(newColorCode) {
-			colorizeLabel(newColorCode, this.$.label);
+			const colors = colorizeLabel(newColorCode, this.$.label);
+			this.$.bottomBorder.style.backgroundColor = colors.primaryColor;
 		}
 
 		_highlightColumnChanged(newVal) {

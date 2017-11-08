@@ -2,33 +2,38 @@
 	<template>
 		<style>
 			:host {
-				display: block;
 				position: relative;
-				width: 38px;
-				height: 166px;
+				width: 108px;
+				height: 132px;
+				margin-right: -70px;
 				will-change: opacity;
 				contain: strict;
+				pointer-events: none;
 				cursor: default;
 				@apply --layout-horizontal;
 			}
 
-			#label {
+			#pointerInterceptor {
 				position: absolute;
 				bottom: 0;
-				left: 0;
+				left: 18px;
+				padding: 3px;
+				transform: rotate(-56.9deg) translateX(-42px);
+				transform-origin: top left;
+				pointer-events: all;
+			}
+
+			#label {
 				width: 160px;
-				height: 32px;
+				height: 27px;
 				border: 2px solid white;
 				background: black;
 				color: white;
 				font-weight: 600;
-				padding: 0 8px;
-				margin: 3px;
+				padding-left: 20px;
+				padding-right: 8px;
 				white-space: nowrap;
 				box-sizing: border-box;
-				transform: rotate(-90deg) translateX(-32px);
-				transform-origin: top left;
-				pointer-events: none;
 				border-bottom-right-radius: 5px;
 				border-top-right-radius: 5px;
 				@apply --layout-horizontal;
@@ -36,12 +41,35 @@
 				@apply --layout-justified;
 				@apply --layout-flex-none;
 			}
+
+			#label-label {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				@apply --layout-flex;
+			}
+
+			#label-num {
+				margin-left: 6px;
+				@apply --layout-flex-none;
+			}
+
+			#bottomBorder {
+				position: absolute;
+				bottom: 0;
+				left: 3px;
+				height: 2px;
+				width: 29px;
+			}
 		</style>
 
-		<div id="label">
-			<span>[[channel.label]]</span>
-			<span>#[[_calcDisplayIndex(index)]]</span>
+		<div id="pointerInterceptor">
+			<div id="label">
+				<span id="label-label" title="[[channel.label]]">[[channel.label]]</span>
+				<span id="label-num">#[[_calcDisplayIndex(index)]]</span>
+			</div>
 		</div>
+
+		<div id="bottomBorder"></div>
 	</template>
 
 	<script src="x32-channel-label.js"></script>

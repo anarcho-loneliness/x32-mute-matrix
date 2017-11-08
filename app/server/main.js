@@ -29,8 +29,8 @@ app.on('ready', () => {
 	mainWindow = new BrowserWindow({
 		x: mainWindowState.x,
 		y: mainWindowState.y,
-		width: 1711,
-		height: 893,
+		width: 1781,
+		height: 861,
 		useContentSize: true,
 		resizable: false,
 		frame: true,

@@ -21,12 +21,13 @@
 			}
 
 			#channelLabels {
-				margin-left: 163px;
+				margin-left: 166px;
+				margin-bottom: 2px;
 				@apply --layout-horizontal;
 			}
 
 			x32-channel-label:nth-of-type(32) {
-				margin-right: 9px;
+				margin-right: -60px;
 			}
 
 			x32-row:first-of-type,
@@ -46,13 +47,23 @@
 				pointer-events: none;
 			}
 
-			#auxDivider {
-				position: absolute;
-				height: 100%;
-				width: 1px;
-				top: 0;
+			#vertAuxDivider {
+				top: 134px;
 				left: 1383px;
-				background: wheat;
+				height: calc(100% - 134px);
+			}
+
+			#angledAuxDivider {
+				top: 0;
+				left: 1422px;
+				height: 146px;
+				transform: rotate(33.1deg) translateX(0.4px);
+			}
+
+			.auxDivider {
+				position: absolute;
+				width: 1px;
+				background: white;
 			}
 		</style>
 
@@ -81,7 +92,8 @@
 			</x32-row>
 		</template>
 
-		<div id="auxDivider"></div>
+		<div id="vertAuxDivider" class="auxDivider"></div>
+		<div id="angledAuxDivider" class="auxDivider"></div>
 
 		<paper-dialog id="updateDialog" modal on-iron-overlay-closed="_handleUpdateDialogClosed">
 			<h2>Update Available</h2>

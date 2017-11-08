@@ -68,7 +68,7 @@ module.exports = function (colorCode, labelElement) {
 		/* falls through */
 		case 'WHi':
 			primaryColor = '#FFFFFF';
-			gradientFgColor = 'rgba(255, 255, 255, 0.5)';
+			gradientFgColor = 'rgba(255, 255, 255, 0.3)';
 			gradientBgColor = '#343434';
 			break;
 
@@ -103,4 +103,11 @@ module.exports = function (colorCode, labelElement) {
 
 	labelElement.style.color = textColor;
 	labelElement.style.border = `2px solid ${primaryColor}`;
+
+	return {
+		primaryColor,
+		textColor,
+		gradientFgColor,
+		gradientBgColor
+	};
 };
