@@ -4,12 +4,12 @@
 [![Windows status](https://ci.appveyor.com/api/projects/status/rgtswyiipcqe4t4p?svg=true)](https://ci.appveyor.com/project/Lange/x32-mute-matrix)
 [![Linux & OSX status](https://travis-ci.org/Lange/x32-mute-matrix.svg?branch=master)](https://travis-ci.org/Lange/x32-mute-matrix)
 
-> See and configure the mute status of all your X32's channels (on every mixbus) in one place.
+> See and configure the mute status of all your Behringer X32's channels (on every mixbus) in one place.
 
 ![screenshot](screenshot.png)
 
 ## Motivation
-Sometimes, as the operator of an audio mixer, you just really want to see (and configure) the mute status of every channel on every bus. This lets you do that.
+Sometimes, as the operator of an audio mixer, you just really want to see (and configure) the mute status of every channel on every bus. This program enables you to do this for your Behringer X32/M32 digital mixers.
 
 ## Features
 - Manage and monitor the mute status of all 32 main inputs and 8 aux inputs on the Main bus, all 16 mixbuses, and the mono bus.
