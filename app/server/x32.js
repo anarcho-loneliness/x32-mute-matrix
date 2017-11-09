@@ -136,7 +136,12 @@ module.exports = {
 
 		broadcastPort.open();
 
-		udpPort.on('message', oscBundle => {
+		udpPort.on('message', (oscBundle, timeTag, info) => {
+			if (info.address !== udpPort.options.remoteAddress ||
+				info.port !== udpPort.options.remotePort) {
+				return;
+			}
+
 			renewHeartbeat();
 			if (oscBundle.address === '/channelConfigs') {
 				parseConfigs(Buffer.from(oscBundle.args[0].value), 'channel');
