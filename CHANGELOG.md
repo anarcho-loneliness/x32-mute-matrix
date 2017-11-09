@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/lange/x32-mute-matrix/compare/v1.0.0...v1.0.1) (2017-11-09)
+
+
+### Bug Fixes
+
+* **autoupdater:** fix autoupdater never checking for updates ([a494e45](https://github.com/lange/x32-mute-matrix/commit/a494e45))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/lange/x32-mute-matrix/compare/v0.0.3...v1.0.0) (2017-11-09)
 
