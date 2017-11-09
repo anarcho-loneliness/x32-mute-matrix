@@ -234,7 +234,7 @@ module.exports = {
 
 		ipcMain.on('init', () => {
 			sendToMainWindow('x32-mutes', mutes, mutesKeyOrder);
-			sendToMainWindow(`x32-configs`, configs);
+			sendToMainWindow('x32-configs', configs);
 			mutesChangeWaiting = false;
 			configsChangeWaiting = false;
 		});
