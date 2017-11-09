@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/lange/x32-mute-matrix/compare/v0.0.3...v1.0.0) (2017-11-09)
+
+
+### Bug Fixes
+
+* fix highlight crosshair being lost sometimes when toggling a channel's mute status ([ba5bc92](https://github.com/lange/x32-mute-matrix/commit/ba5bc92))
+* ignore traffic from unexpected sources ([bcbdd16](https://github.com/lange/x32-mute-matrix/commit/bcbdd16))
+* remove leading zeroes from row bus numbers ([68df684](https://github.com/lange/x32-mute-matrix/commit/68df684))
+* use more appropriate cursors on channel buttons and labels ([8b4cb87](https://github.com/lange/x32-mute-matrix/commit/8b4cb87))
+
+
+### Features
+
+* add connection status indicator; redesign connection dialog ([3dc99a9](https://github.com/lange/x32-mute-matrix/commit/3dc99a9))
+* add support for click-and-drag toggling of mutes ([57f514f](https://github.com/lange/x32-mute-matrix/commit/57f514f)), closes [#1](https://github.com/lange/x32-mute-matrix/issues/1)
+* make channel labels sit at an angle for improved legibility ([8169bdf](https://github.com/lange/x32-mute-matrix/commit/8169bdf))
+* redesign labels, differentiate between inverted and non-inverted colors ([a59d972](https://github.com/lange/x32-mute-matrix/commit/a59d972))
+
+
+### Performance Improvements
+
+* **client:** greatly improve general UI performance & framerate ([f951033](https://github.com/lange/x32-mute-matrix/commit/f951033))
+* **x32-row:** use window.x32AppDarkenedOpacity for setting label opacity ([39d4404](https://github.com/lange/x32-mute-matrix/commit/39d4404))
+
+
+
 <a name="0.0.3"></a>
 ## [0.0.3](https://github.com/lange/x32-mute-matrix/compare/v0.0.2...v0.0.3) (2017-09-07)
 
