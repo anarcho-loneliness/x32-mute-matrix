@@ -33,7 +33,7 @@ Once installed, the application will autoupdate.
 
 ## Credits
 Developed by [Alex Van Camp](https://twitter.com/vancamp)  
-Assets and additional design by [Chris Hanel](https://twitter.com/chrishanel)
+Assets and additional design by [Chris Hanel](https://twitter.com/chrishanel)  
 QA and feedback provided by [Mark Schwartzkopf](https://twitter.com/m_schwartzkopf)
 
 ## License
