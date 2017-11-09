@@ -32,11 +32,13 @@ const COLOR_MAP = [
 	'WHi'
 ];
 
-let udpPort;
 let broadcastPort;
+let configsChangeWaiting = false;
+let heartbeatTimeout;
+let lastX32Status;
 let mainWindow;
 let mutesChangeWaiting = false;
-let configsChangeWaiting = false;
+let udpPort;
 
 const muteArrayProxyHandler = {
 	set(target, prop, newVal) {
@@ -135,6 +137,7 @@ module.exports = {
 		broadcastPort.open();
 
 		udpPort.on('message', oscBundle => {
+			renewHeartbeat();
 			if (oscBundle.address === '/channelConfigs') {
 				parseConfigs(Buffer.from(oscBundle.args[0].value), 'channel');
 			} else if (oscBundle.address === '/mixbusConfigs') {
@@ -233,8 +236,10 @@ module.exports = {
 		});
 
 		ipcMain.on('init', () => {
+			log.debug('Received "init" message from main window');
 			sendToMainWindow('x32-mutes', mutes, mutesKeyOrder);
 			sendToMainWindow('x32-configs', configs);
+			sendToMainWindow('x32-connection-status', lastX32Status);
 			mutesChangeWaiting = false;
 			configsChangeWaiting = false;
 		});
@@ -243,6 +248,7 @@ module.exports = {
 	setIpPort(ip, port) {
 		udpPort.options.remoteAddress = ip;
 		udpPort.options.remotePort = port;
+		setX32ConnectionStatus('connecting');
 		renewSubscriptions();
 	}
 };
@@ -410,4 +416,19 @@ function makeConfigProxy({name = '', label = ''} = {}) {
 		label,
 		color: 'OFF'
 	}, channelConfigProxyHandler);
+}
+
+function renewHeartbeat() {
+	setX32ConnectionStatus('connected');
+	clearTimeout(heartbeatTimeout);
+	heartbeatTimeout = setTimeout(() => {
+		setX32ConnectionStatus('offline');
+	}, 500);
+}
+
+function setX32ConnectionStatus(newStatus) {
+	if (newStatus !== lastX32Status) {
+		sendToMainWindow('x32-connection-status', newStatus);
+		lastX32Status = newStatus;
+	}
 }

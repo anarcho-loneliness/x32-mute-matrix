@@ -13,16 +13,15 @@ Sometimes, as the operator of an audio mixer, you just really want to see (and c
 
 ## Features
 - Manage and monitor the mute status of all 32 main inputs and 8 aux inputs on the Main bus, all 16 mixbuses, and the mono bus.
-- Automatically pulls the names and colors of every bus/channel from the X32
+- Automatically pulls the names and colors of every bus/channel from the X32.
 - Connection history that remembers device addresses that have been connected to in the past.
+- Connection status indicator
+- Automatic reconnection to previous device on program start
 - Installers available for Windows, macOS, and Linux.
 
 ## Planned Features
 - Stereo bus on/off
-- Redesigned row and column headers
 - Automatic discovery of X32/M32 devices
-- Connection status indicator
-- Automatic reconnection to previous device on program start
 - Collapsing/folding of linked channels & buses
 - Choose which channels and buses to show or hide
 - Set the names and colors of channels and buses

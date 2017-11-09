@@ -21,7 +21,7 @@ let mainWindow;
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on('ready', () => {
+app.on('ready', async () => {
 	// Load the previous state with fallback to defaults
 	const mainWindowState = windowStateKeeper();
 
@@ -44,9 +44,10 @@ app.on('ready', () => {
 
 	// Spin up the X32 lib
 	const x32 = require('./x32');
-	x32.init(mainWindow).catch(error => {
-		log.error(error);
-	});
+	await x32.init(mainWindow);
+
+	// Spin up the connection-window lib
+	require('./connection-window').init(mainWindow);
 
 	// Spin up the menu lib
 	require('./menu')(mainWindow, x32);
@@ -60,6 +61,6 @@ app.on('ready', () => {
 	mainWindowState.manage(mainWindow);
 
 	// And load the index.html of the app.
-	const webviewPath = path.resolve(__dirname, '../client/main/main.html');
+	const webviewPath = path.resolve(__dirname, '../client/main.html');
 	mainWindow.loadURL(`file:///${webviewPath}`);
 });

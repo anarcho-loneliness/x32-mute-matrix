@@ -1,7 +1,5 @@
 'use strict';
 
-const URL_PROMPT_WIDTH = 538;
-const URL_PROMPT_HEIGHT = 154;
 const ABOUT_WIDTH = 455;
 const ABOUT_HEIGHT = 230;
 
@@ -10,8 +8,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Packages
-const {app, BrowserWindow, Menu, ipcMain, shell} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu, shell} = require('electron');
 const log = require('electron-log');
+
+// Ours
+const ipPrompt = require('./connection-window');
 
 const userDataPath = app.getPath('userData');
 const recentPath = path.join(userDataPath, 'recentConnections.json');
@@ -30,14 +31,51 @@ const recentConnections = (function () {
 
 let aboutWindow;
 let mainWindow;
-let urlPromptWindow;
 let x32;
 
 module.exports = function (mw, x) {
 	mainWindow = mw;
 	x32 = x;
+
+	if (recentConnections && recentConnections.length > 0) {
+		const recentUrl = recentConnections[0];
+		log.info(`Restoring connection to ${recentUrl.ip}:${recentUrl.port}`);
+		recentUrl.lastOpened = Date.now();
+		x32.setIpPort(recentUrl.ip, recentUrl.port);
+	}
+
 	regenerateMenu();
 };
+
+module.exports.recentConnections = recentConnections;
+
+ipcMain.on('submitIpPort', (event, ip, port) => {
+	let recentUrl = recentConnections.find(r => r.ip === ip && r.port === port);
+	if (!recentUrl) {
+		recentUrl = {ip, port};
+		recentConnections.push(recentUrl);
+
+		if (recentConnections.length > 10) {
+			recentConnections.length = 10;
+		}
+	}
+	recentUrl.lastOpened = Date.now();
+	sortRecentConnections();
+
+	try {
+		fs.writeFileSync(recentPath, JSON.stringify(recentConnections), 'utf-8');
+	} catch (e) {
+		log.error(e);
+	}
+
+	x32.setIpPort(ip, port);
+	ipPrompt.close();
+	regenerateMenu();
+});
+
+ipcMain.on('getRecentConnectionsSync', event => {
+	event.returnValue = recentConnections;
+});
 
 function regenerateMenu() {
 	const fileTemplate = {
@@ -45,73 +83,7 @@ function regenerateMenu() {
 		submenu: [{
 			label: 'Open...',
 			click() {
-				// Calculate the position of the urlPromptWindow.
-				// It will appear in the center of the mainWindow.
-				const mainWindowPosition = mainWindow.getPosition();
-				const mainWindowSize = mainWindow.getSize();
-				const x = Math.round(mainWindowPosition[0] + (mainWindowSize[0] / 2) - (URL_PROMPT_WIDTH / 2));
-				const y = Math.round(mainWindowPosition[1] + (mainWindowSize[1] / 2) - (URL_PROMPT_HEIGHT / 2));
-
-				// If the urlPromptWindow is already open, focus and re-center it.
-				if (urlPromptWindow) {
-					urlPromptWindow.focus();
-					urlPromptWindow.setPosition(x, y);
-					return;
-				}
-
-				urlPromptWindow = new BrowserWindow({
-					x,
-					y,
-					width: URL_PROMPT_WIDTH,
-					height: URL_PROMPT_HEIGHT,
-					useContentSize: true,
-					resizable: true,
-					fullscreen: false,
-					fullscreenable: false,
-					frame: true,
-					minimizable: false,
-					maximizable: false,
-					autoHideMenuBar: true,
-					title: 'Connect'
-				});
-
-				urlPromptWindow.on('closed', () => {
-					urlPromptWindow = null;
-				});
-
-				ipcMain.on('submitIpPort', (event, ip, port) => {
-					let recentUrl = recentConnections.find(r => r.ip === ip && r.port === port);
-					if (!recentUrl) {
-						recentUrl = {ip, port};
-						recentConnections.push(recentUrl);
-
-						if (recentConnections.length > 10) {
-							recentConnections.length = 10;
-						}
-					}
-					recentUrl.lastOpened = Date.now();
-					sortRecentConnections();
-
-					try {
-						fs.writeFileSync(recentPath, JSON.stringify(recentConnections), 'utf-8');
-					} catch (e) {
-						log.error(e);
-					}
-
-					x32.setIpPort(ip, port);
-
-					if (urlPromptWindow) {
-						urlPromptWindow.close();
-					}
-
-					regenerateMenu();
-				});
-
-				// Remove the menu from the urlPromptWindow.
-				urlPromptWindow.setMenu(null);
-
-				const promptPath = path.resolve(__dirname, '../client/ip-prompt/ip-prompt.html');
-				urlPromptWindow.loadURL(`file:///${promptPath}`);
+				ipPrompt.open();
 			}
 		}, {
 			label: 'Open Recent',

@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="x32-channel-label.html">
 <link rel="import" href="x32-row.html">
+<link rel="import" href="x32-status.html">
 
 <dom-module id="x32-app">
 	<template>
@@ -18,6 +19,12 @@
 				user-select: none;
 				--x32-app-dim-opacity: 0.45;
 				@apply --layout-vertical;
+			}
+
+			#status {
+				position: absolute;
+				top: 0;
+				left: 0;
 			}
 
 			#channelLabels {
@@ -66,6 +73,8 @@
 				background: white;
 			}
 		</style>
+
+		<x32-status id="status"></x32-status>
 
 		<div id="channelLabels">
 			<template is="dom-repeat" items="[[channels]]" as="channel">

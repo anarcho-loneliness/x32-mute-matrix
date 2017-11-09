@@ -2,7 +2,7 @@
 	'use strict';
 
 	const {ipcRenderer} = require('electron');
-	const colorizeLabel = require('../lib/colorize-label');
+	const colorizeLabel = require('./lib/colorize-label'); // Resolved relative to the parent HTML file.
 
 	/**
 	 * @customElement
