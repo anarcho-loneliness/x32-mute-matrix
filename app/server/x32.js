@@ -346,6 +346,12 @@ function renewSubscriptions() {
 	});
 }
 
+/**
+ * Updates the `configs` object with new data from the mixer.
+ * This mutates the `configs` object, and does not return anything.
+ * @param blob {Buffer}
+ * @param type {('channel'|'mixbus'|'auxin')}
+ */
 function parseConfigs(blob, type) {
 	let num = 0;
 	switch (type) {
