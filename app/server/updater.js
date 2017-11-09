@@ -2,7 +2,7 @@
 
 // Packages
 const autoUpdater = require('electron-updater').autoUpdater;
-const {ipcMain, app} = require('electron');
+const {ipcMain} = require('electron');
 const log = require('electron-log');
 
 // Ours
@@ -12,6 +12,7 @@ autoUpdater.logger = log;
 
 module.exports = function (mainWindow) {
 	if (isDev) {
+		log.debug('Detected dev environment, autoupdate disabled.');
 		return;
 	}
 
@@ -19,9 +20,8 @@ module.exports = function (mainWindow) {
 		mainWindow.webContents.send('updateDownloaded', info);
 	});
 
-	app.on('ready', () => {
-		autoUpdater.checkForUpdates();
-	});
+	log.debug('Checking for updates...');
+	autoUpdater.checkForUpdates();
 
 	ipcMain.on('installUpdateNow', () => {
 		autoUpdater.quitAndInstall();

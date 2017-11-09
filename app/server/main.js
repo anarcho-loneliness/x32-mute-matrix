@@ -52,7 +52,7 @@ app.on('ready', async () => {
 	// Spin up the menu lib
 	require('./menu')(mainWindow, x32);
 
-	// Spin up the autoupdader
+	// Spin up the autoupdater
 	require('./updater')(mainWindow);
 
 	// Let us register listeners on the window, so we can update the state
