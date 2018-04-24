@@ -4,7 +4,7 @@
   "description": "See and configure the mute status of all your X32's channels (on every mixbus) in one place.",
   "devDependencies": {
     "electron": "^1.7.9",
-    "electron-builder": "^19.45.1",
+    "electron-builder": "^20.10.0",
     "eslint": "^4.10.0",
     "eslint-config-xo": "^0.20.1",
     "eslint-plugin-html": "^4.0.0",
